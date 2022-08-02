@@ -29,6 +29,7 @@ class DashboardPostController extends Controller
      */
     public function create()
     {
+            
         return view('dashboard.posts.create', [
             "categories" => Category::all()
         ]);
@@ -42,6 +43,7 @@ class DashboardPostController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request->file('image')['mimeType']);
         return $request->file('image')->store('post-images');
         $validatedData = $request->validate([
             'title' => 'required|max:255',
