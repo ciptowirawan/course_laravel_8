@@ -58,7 +58,7 @@ class DashboardPostController extends Controller
             'slug' => 'required|unique:posts',
             'category_id' => 'required',
             'body' => 'required',
-            'image' => 'required|mimes:jpeg,jpg,png,bmp,tiff|max:1024',
+            'image' => 'mimes:jpeg,jpg,png,bmp,tiff|file|max:1024',
         ]);
         
         // If there's error
@@ -67,9 +67,10 @@ class DashboardPostController extends Controller
             $error = ValidationException::withMessages($error_message);
             throw $error;
         }
-
+        
         if ($request->file('image')) {
-            $request->image = $request->file('image')->store('post-images');
+            $img = $request->file('image')->store('post-images');
+            $request->request->add(['image_path' => $img]);
         }
 
         // Add field user_id & excerpt to request
@@ -80,7 +81,15 @@ class DashboardPostController extends Controller
         // $request->user_id = auth()->user()->id;
         // $request->excerpt = Str::limit(strip_tags($request->body, 200));
 
-        Post::create($request->all());
+        Post::create([
+            "title" => $request->title,
+            "slug" => $request->slug,
+            "category_id" => $request->category_id,
+            "body" => $request->body,
+            "image" => $request->image_path,
+            "user_id" => $request->user_id,
+            "excerpt" => $request->excerpt
+        ]);
 
         return redirect('/dashboard/posts')->with('success', 'New post has been added!');
     }
