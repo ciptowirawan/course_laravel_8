@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\http\Controllers\PostController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\AdminCategoryController;
 use App\Http\Controllers\DashboardPostController;
 
 /*
@@ -74,6 +75,7 @@ Route::prefix('/dashboard')->group(function() {
     })->middleware('auth');
     Route::get('/posts/checkSlug', [DashboardPostController::class, 'CheckSlug'])->middleware('auth');
     Route::resource('/posts', DashboardPostController::class)->middleware('auth');
+    Route::resource('/categories', AdminCategoryController::class)->except('show')->middleware('admin');
 });
 
 Route::prefix('/logout')->group(function() {
